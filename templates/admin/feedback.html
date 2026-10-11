@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Admin &middot; Feedback{% endblock %}
+{% block content %}
+<h1>Rider feedback</h1>
+<div class="panel">
+  {% if items %}
+    {% for f in items %}
+    <div style="border-bottom:1px solid var(--line);padding:12px 0;">
+      <strong>{{ f.uname }}</strong>
+      <p style="margin:4px 0 0;">{{ f.feed }}</p>
+    </div>
+    {% endfor %}
+  {% else %}
+    <p class="empty">No feedback submitted yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Cancel ticket{% endblock %}
+{% block content %}
+<div class="panel" style="max-width:480px;">
+  <div class="panel-title">Cancel a ticket</div>
+  <form method="post" action="{{ url_for('cancel_ticket') }}">
+    <label for="tno">Ticket number</label>
+    <input type="text" id="tno" name="tno" placeholder="e.g. Tic12" required>
+    <button type="submit" class="btn btn-danger" style="margin-top:14px;">Cancel ticket</button>
+  </form>
+</div>
+
+<div class="panel">
+  <div class="panel-title">Your active tickets</div>
+  {% if tickets %}
+  <table class="data">
+    <tr><th>Ticket No.</th><th>Bus</th><th>Route</th><th>Seats</th><th>Status</th></tr>
+    {% for t in tickets %}
+    <tr>
+      <td class="mono">{{ t.tid }}</td>
+      <td>{{ t.bus.bname }}</td>
+      <td class="route">{{ t.bus.source }} &rarr; {{ t.bus.dest }}</td>
+      <td class="mono">{{ t.seat }}</td>
+      <td><span class="badge {{ 'paid' if t.status=='Paid' else 'booked' }}">{{ t.status }}</span></td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <p class="empty">No tickets to show.</p>
+  {% endif %}
+</div>
+{% endblock %}

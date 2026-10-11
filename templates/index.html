@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<div class="hero">
+  <svg class="hero-illustration" viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <!-- route line connecting stops -->
+    <path d="M20 230 C 70 210, 90 160, 130 150 S 200 100, 230 60" fill="none" stroke="#E8A33D" stroke-width="2.5" stroke-dasharray="1 10" stroke-linecap="round"/>
+    <circle cx="20" cy="230" r="6" fill="#1E7F72"/>
+    <circle cx="130" cy="150" r="5" fill="#F6F3EC"/>
+    <circle cx="230" cy="60" r="6" fill="#E8A33D"/>
+    <!-- schematic bus -->
+    <g transform="translate(150,168) rotate(-28)">
+      <rect x="0" y="0" width="54" height="26" rx="5" fill="#F6F3EC" opacity="0.95"/>
+      <rect x="6" y="5" width="12" height="9" rx="1.5" fill="#22315A"/>
+      <rect x="21" y="5" width="12" height="9" rx="1.5" fill="#22315A"/>
+      <rect x="36" y="5" width="12" height="9" rx="1.5" fill="#22315A"/>
+      <circle cx="12" cy="26" r="4" fill="#16213D"/>
+      <circle cx="42" cy="26" r="4" fill="#16213D"/>
+    </g>
+    <!-- seat-grid motif, top right -->
+    <g transform="translate(196,10)" fill="none" stroke="#C9D0E3" stroke-width="1.2" opacity="0.55">
+      <rect x="0" y="0" width="14" height="14" rx="3"/>
+      <rect x="20" y="0" width="14" height="14" rx="3"/>
+      <rect x="0" y="20" width="14" height="14" rx="3"/>
+      <rect x="20" y="20" width="14" height="14" rx="3"/>
+    </g>
+  </svg>
+  <div class="hero-grid">
+    <div>
+      <h1>Book your seat. Skip the queue.</h1>
+      <p>Search routes, pick a seat, and get a printable e-ticket in under a minute.</p>
+    </div>
+    <div class="login-card">
+      <h3>Log in</h3>
+      <div class="sub">Enter your details to continue.</div>
+      <form method="post" action="{{ url_for('login') }}">
+        <label for="uname">Username</label>
+        <input type="text" id="uname" name="uname" required autofocus>
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required>
+        <div style="margin-top:18px;">
+          <button type="submit" class="btn btn-amber" style="width:100%;">Sign in</button>
+        </div>
+      </form>
+      <p style="font-size:12.5px;margin-top:14px;color:var(--ink-soft);">
+        New here? <a href="{{ url_for('register') }}">Create an account</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel-title">Why RoadLine</div>
+  <div class="grid-3">
+    <div>
+      <h3>Live seat map</h3>
+      <p class="muted">See exactly which of the 36 seats are free before you book.</p>
+    </div>
+    <div>
+      <h3>Instant e-ticket</h3>
+      <p class="muted">Look up any ticket by ID and print or save it as a PDF.</p>
+    </div>
+    <div>
+      <h3>Ratings you can trust</h3>
+      <p class="muted">Read and leave reviews for every operator on the network.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

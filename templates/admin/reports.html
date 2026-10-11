@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Admin &middot; Reports{% endblock %}
+{% block content %}
+<h1>&#128202; Reports &amp; analytics</h1>
+
+<div class="grid-4" style="margin-bottom:24px;">
+  <div class="stat"><div class="num">{{ total_bookings }}</div><div class="lbl">Total bookings</div></div>
+  <div class="stat"><div class="num">Rs. {{ total_revenue }}</div><div class="lbl">Total revenue</div></div>
+  <div class="stat"><div class="num">{{ total_buses }}</div><div class="lbl">Buses listed</div></div>
+  <div class="stat"><div class="num">{{ total_users }}</div><div class="lbl">Registered users</div></div>
+</div>
+<div class="stat" style="max-width:220px;margin-bottom:24px;">
+  <div class="num">{{ "%.1f"|format(avg_rating) if avg_rating else '&mdash;' }} &#9733;</div>
+  <div class="lbl">Average rating</div>
+</div>
+
+<div class="panel">
+  <div class="panel-title">Top routes &mdash; bookings vs revenue</div>
+  <canvas id="routeChart" height="110"></canvas>
+</div>
+
+<div class="panel">
+  <div class="panel-title">Booking status breakdown</div>
+  <canvas id="statusChart" height="110"></canvas>
+</div>
+
+<div class="panel">
+  <div class="panel-title">&#129302; AI demand forecast &mdash; next 7 days</div>
+  <p class="muted" style="font-size:13px;margin-bottom:10px;">
+    Predicted booking demand based on historical weekday booking patterns. Use this to plan extra buses or staff on high-demand days.
+  </p>
+  <table class="data">
+    <thead><tr><th>Date</th><th>Day</th><th>Predicted demand</th></tr></thead>
+    <tbody>
+      {% for f in peak_forecast %}
+      <tr>
+        <td>{{ f.date }}</td>
+        <td>{{ f.weekday }}</td>
+        <td>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div style="background:#E8A33D;height:8px;border-radius:4px;width:{{ f.demand_score }}%;max-width:140px;"></div>
+            <span class="mono">{{ f.demand_score }}%</span>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const routeLabels = {{ route_labels | tojson }};
+const routeCounts = {{ route_counts | tojson }};
+const routeRevenue = {{ route_revenue | tojson }};
+const statusLabels = {{ status_labels | tojson }};
+const statusCounts = {{ status_counts | tojson }};
+
+new Chart(document.getElementById('routeChart'), {
+  type: 'bar',
+  data: {
+    labels: routeLabels,
+    datasets: [
+      { label: 'Bookings', data: routeCounts, backgroundColor: '#1E7F72' },
+      { label: 'Revenue (Rs.)', data: routeRevenue, backgroundColor: '#E8A33D' }
+    ]
+  },
+  options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+});
+
+new Chart(document.getElementById('statusChart'), {
+  type: 'doughnut',
+  data: {
+    labels: statusLabels,
+    datasets: [{ data: statusCounts, backgroundColor: ['#1E7F72','#E8A33D','#C4432B','#16213D'] }]
+  },
+  options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+});
+</script>
+{% endblock %}

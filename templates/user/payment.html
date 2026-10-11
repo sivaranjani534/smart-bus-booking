@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Payment{% endblock %}
+{% block content %}
+<div class="panel" style="max-width:520px;">
+  <h1>&#128179; Online payment</h1>
+
+  {% if not ticket %}
+    <form method="get" action="{{ url_for('payment_gateway') }}">
+      <label for="tid">Enter your ticket number to pay</label>
+      <input type="text" id="tid" name="tid" placeholder="e.g. Tic12" value="{{ tid }}" required>
+      <button type="submit" class="btn btn-amber" style="margin-top:14px;">Find ticket</button>
+    </form>
+  {% else %}
+    <div class="grid-3" style="margin-bottom:18px;">
+      <div class="stat"><div class="num mono">{{ ticket.tid }}</div><div class="lbl">Ticket No</div></div>
+      <div class="stat"><div class="num">Rs. {{ ticket.total }}</div><div class="lbl">Amount due</div></div>
+      <div class="stat"><div class="num">{{ ticket.status }}</div><div class="lbl">Status</div></div>
+    </div>
+
+    {% if ticket.status != 'Paid' %}
+    <form method="post" action="{{ url_for('payment_gateway', tid=ticket.tid) }}">
+      <label for="method">Payment method</label>
+      <select name="method" id="method" required>
+        <option value="UPI">UPI</option>
+        <option value="Credit/Debit Card">Credit / Debit card</option>
+        <option value="Net Banking">Net banking</option>
+        <option value="Wallet">Wallet</option>
+      </select>
+      <label for="card">Card / UPI ID <span class="muted">(demo only &mdash; not verified)</span></label>
+      <input type="text" id="card" placeholder="e.g. name@upi or 4111 1111 1111 1111" required>
+      <button type="submit" name="pay_btn" class="btn btn-amber" style="margin-top:14px;">Pay Rs. {{ ticket.total }}</button>
+    </form>
+    {% else %}
+      <p><span class="badge paid">Already paid</span></p>
+      <a href="{{ url_for('eticket', tid=ticket.tid) }}" class="btn">Download e-ticket</a>
+    {% endif %}
+  {% endif %}
+</div>
+{% endblock %}

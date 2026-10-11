@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Admin &middot; Bookings{% endblock %}
+{% block content %}
+<h1>All bookings</h1>
+<div class="panel">
+  {% if rows %}
+  <table class="data">
+    <tr><th>Ticket</th><th>User</th><th>Bus</th><th>Route</th><th>Seats</th><th>Total</th><th>Status</th></tr>
+    {% for t, b, u in rows %}
+    <tr>
+      <td class="mono">{{ t.tid }}</td>
+      <td>{{ u.name if u else t.uid }}</td>
+      <td>{{ b.bname }}</td>
+      <td class="route">{{ b.source }} &rarr; {{ b.dest }}</td>
+      <td class="mono">{{ t.seat }}</td>
+      <td class="mono">Rs. {{ t.total }}</td>
+      <td><span class="badge {{ 'paid' if t.status=='Paid' else 'booked' }}">{{ t.status }}</span></td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <p class="empty">No bookings yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

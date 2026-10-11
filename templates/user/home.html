@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Search buses{% endblock %}
+{% block content %}
+<div class="panel">
+  <div class="panel-title">Find a bus</div>
+  <form method="get" action="{{ url_for('user_home') }}">
+    <div class="grid-3" style="align-items:end;">
+      <div>
+        <label for="src">Source</label>
+        <select name="src" id="src">
+          <option value="">Select</option>
+          {% for s in sources %}
+            <option value="{{ s }}" {{ 'selected' if s==src }}>{{ s }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="des">Destination</label>
+        <select name="des" id="des">
+          <option value="">Select</option>
+          {% for d in dests %}
+            <option value="{{ d }}" {{ 'selected' if d==des }}>{{ d }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <button type="submit" class="btn btn-amber" style="width:100%;">Search</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+{% if searched %}
+<div class="panel">
+  <div class="panel-title">Results</div>
+  {% if buses %}
+  <table class="data">
+    <tr><th>Bus name</th><th>Route</th><th>Type</th><th>Departs</th><th>Price</th><th>Rating</th><th></th></tr>
+    {% for b in buses %}
+    <tr>
+      <td><b>{{ b.bname }}</b><br><span class="muted" style="font-size:12px;">{{ b.name }}</span></td>
+      <td class="route">{{ b.source }} &rarr; {{ b.dest }}</td>
+      <td>{{ b.btype }}</td>
+      <td class="mono">{{ b.stime }} &ndash; {{ b.atime }}</td>
+      <td class="mono">Rs. {{ b.price }}</td>
+      <td>{% if b.avg_rating %}<span class="stars">&#9733;</span> {{ "%.1f"|format(b.avg_rating) }}{% else %}<span class="muted">No reviews</span>{% endif %}</td>
+      <td><a href="{{ url_for('bus_detail', bus_id=b.id) }}" class="btn btn-sm">View &amp; book</a></td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <p class="empty">No buses found for that route. Try a different source or destination.</p>
+  {% endif %}
+</div>
+{% endif %}
+{% endblock %}

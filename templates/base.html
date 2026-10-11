@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>{% block title %}BusTicket{% endblock %} — RoadLine</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a href="{{ url_for('index') }}" class="brand">
+      <span class="brand-mark">&#8594;</span> RoadLine
+    </a>
+    <nav class="nav">
+      {% if is_admin %}
+        <a href="{{ url_for('admin_dashboard') }}" class="{{ 'active' if request.endpoint=='admin_dashboard' }}">Add Bus</a>
+        <a href="{{ url_for('admin_buses') }}" class="{{ 'active' if request.endpoint=='admin_buses' }}">Buses</a>
+        <a href="{{ url_for('admin_users') }}" class="{{ 'active' if request.endpoint=='admin_users' }}">Users</a>
+        <a href="{{ url_for('admin_bookings') }}" class="{{ 'active' if request.endpoint=='admin_bookings' }}">Bookings</a>
+        <a href="{{ url_for('admin_feedback') }}" class="{{ 'active' if request.endpoint=='admin_feedback' }}">Feedback</a>
+        <a href="{{ url_for('admin_reports') }}" class="{{ 'active' if request.endpoint=='admin_reports' }}">Reports</a>
+        <a href="{{ url_for('logout') }}" class="nav-cta">Log out</a>
+      {% elif current_user %}
+        <a href="{{ url_for('user_home') }}" class="{{ 'active' if request.endpoint=='user_home' }}">Search</a>
+        <a href="{{ url_for('my_bookings') }}" class="{{ 'active' if request.endpoint=='my_bookings' }}">My Bookings</a>
+        <a href="{{ url_for('cancel_ticket') }}" class="{{ 'active' if request.endpoint=='cancel_ticket' }}">Cancel</a>
+        <a href="{{ url_for('rate_bus') }}" class="{{ 'active' if request.endpoint=='rate_bus' }}">Rate</a>
+        <a href="{{ url_for('feedback') }}" class="{{ 'active' if request.endpoint=='feedback' }}">Feedback</a>
+        {% if unread_count %}
+        <a href="{{ url_for('mark_notifications_read') }}" class="bell" title="{{ unread_count }} new notification(s)">&#128276;<span class="dot"></span></a>
+        {% endif %}
+        <a href="{{ url_for('logout') }}" class="nav-cta">Log out</a>
+      {% else %}
+        <a href="{{ url_for('index') }}" class="{{ 'active' if request.endpoint=='index' }}">Home</a>
+        <a href="{{ url_for('contact') }}" class="{{ 'active' if request.endpoint=='contact' }}">Contact</a>
+        <a href="{{ url_for('register') }}" class="{{ 'active' if request.endpoint=='register' }}">Register</a>
+        <a href="{{ url_for('index') }}" class="nav-cta">Log in</a>
+      {% endif %}
+    </nav>
+  </div>
+</header>
+
+<main class="wrap page">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-stack">
+      {% for category, message in messages %}
+        <div class="flash flash-{{ category }}">{{ message }}</div>
+      {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <span>RoadLine &mdash; converted from the original PHP bus-ticket app to Python/Flask.</span>
+  </div>
+</footer>
+
+</body>
+</html>

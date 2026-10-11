@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Contact{% endblock %}
+{% block content %}
+<div class="panel" style="max-width:520px;">
+  <h1>Contact us</h1>
+  <p class="muted">Have a question about a booking or an operator? Reach out and we'll help.</p>
+  <label>Your email</label>
+  <input type="email" placeholder="you@example.com">
+  <label>Message</label>
+  <textarea placeholder="How can we help?"></textarea>
+  <div style="margin-top:18px;">
+    <button class="btn btn-amber" type="button" disabled>Send message</button>
+    <span class="muted" style="font-size:12.5px;margin-left:10px;">(demo form &mdash; not wired to email)</span>
+  </div>
+</div>
+{% endblock %}

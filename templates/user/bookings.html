@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}My bookings{% endblock %}
+{% block content %}
+<h1>My bookings</h1>
+{% if tickets %}
+  {% for t in tickets %}
+  <div class="ticket">
+    <div class="ticket-main">
+      <div class="ticket-row" style="margin-top:0;">
+        <div class="ticket-field"><b>{{ t.bus.bname }}</b><br>{{ t.bus.name }}</div>
+        <span class="badge {{ 'paid' if t.status=='Paid' else ('cancelled' if t.status=='Cancelled' else 'booked') }}">{{ t.status }}</span>
+      </div>
+      <div class="ticket-row">
+        <div class="ticket-field"><b>Route</b><br><span class="route">{{ t.bus.source }} &rarr; {{ t.bus.dest }}</span></div>
+        <div class="ticket-field"><b>Seats</b><br class="mono">{{ t.seat }}</div>
+        <div class="ticket-field"><b>Date</b><br>{{ t.date or '&mdash;' }}</div>
+        <div class="ticket-field"><b>Total</b><br>Rs. {{ t.total }}</div>
+      </div>
+      <div style="margin-top:14px;">
+        <a href="{{ url_for('eticket', tid=t.tid) }}" class="btn btn-sm btn-outline">E-Ticket</a>
+        {% if t.status != 'Paid' %}
+          <a href="{{ url_for('payment_gateway', tid=t.tid) }}" class="btn btn-sm btn-amber">Pay now</a>
+        {% endif %}
+      </div>
+    </div>
+    <div class="ticket-stub">
+      <div class="stub-label">Ticket No.</div>
+      <div class="tid">{{ t.tid }}</div>
+    </div>
+  </div>
+  {% endfor %}
+{% else %}
+  <p class="empty">You haven't booked any tickets yet. <a href="{{ url_for('user_home') }}">Search buses</a>.</p>
+{% endif %}
+{% endblock %}

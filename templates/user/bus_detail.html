@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}{{ bus.bname }}{% endblock %}
+{% block content %}
+<div class="grid-2">
+  <div class="panel">
+    <div class="panel-title">Bus details</div>
+    <h1>{{ bus.bname }}</h1>
+    <p class="muted">{{ bus.name }}</p>
+    <div class="ticket-row" style="margin-top:14px;">
+      <div class="ticket-field"><b>Route</b><br><span class="route">{{ bus.source }} &rarr; {{ bus.dest }}</span></div>
+      <div class="ticket-field"><b>Type</b><br>{{ bus.btype }}</div>
+      <div class="ticket-field"><b>Time</b><br class="mono">{{ bus.stime }} &ndash; {{ bus.atime }}</div>
+      <div class="ticket-field"><b>Price / seat</b><br>Rs. {{ bus.price }}</div>
+    </div>
+    {% if bus.avg_rating %}
+    <p style="margin-top:14px;"><span class="stars">&#9733;</span> {{ "%.1f"|format(bus.avg_rating) }} average rating</p>
+    {% endif %}
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">Select seats</div>
+    {% if recommended %}
+    <p class="muted" style="font-size:13px;margin-bottom:10px;">
+      &#129302; <b>AI recommended for you:</b>
+      seats {{ recommended | join(', ') }} — picked from booking-popularity and window-seat comfort scoring.
+    </p>
+    {% endif %}
+    <div class="seat-legend">
+      <span><span class="swatch" style="background:#F1EEE4;border:1px solid var(--line);"></span> Available</span>
+      <span><span class="swatch" style="background:var(--teal);"></span> Selected</span>
+      <span><span class="swatch" style="background:#EADAD3;"></span> Booked</span>
+      <span><span class="swatch" style="background:#FCE9C6;border:1px solid #E8A33D;"></span> AI recommended</span>
+    </div>
+    <div class="seat-map" id="seatMap">
+      {% for n in range(1, seat_count + 1) %}
+        <div class="seat {{ 'booked' if n in booked }}{{ ' ai-recommended' if n in recommended and n not in booked }}" data-seat="{{ n }}">{{ n }}</div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel-title">Passenger &amp; journey details</div>
+  <form method="post" action="{{ url_for('bus_detail', bus_id=bus.id) }}" id="bookForm">
+    <input type="hidden" name="seat" id="seatField">
+    <div class="grid-3">
+      <div>
+        <label for="date">Journey date</label>
+        <input type="date" name="date" id="date" required>
+      </div>
+      <div>
+        <label for="adult">Adults</label>
+        <select name="adult" id="adult">
+          {% for i in range(0,7) %}<option value="{{ i }}">{{ i }}</option>{% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="children">Children</label>
+        <select name="children" id="children">
+          {% for i in range(0,7) %}<option value="{{ i }}">{{ i }}</option>{% endfor %}
+        </select>
+      </div>
+    </div>
+    <p class="muted" style="margin-top:12px;font-size:13px;">
+      Selected seats: <span id="seatSummary" class="mono">none</span> &middot;
+      Estimated total: <span id="totalSummary" class="mono">Rs. 0</span>
+    </p>
+    <button type="submit" class="btn btn-amber" style="margin-top:10px;">Book now</button>
+    <a href="{{ url_for('user_home') }}" class="btn btn-outline" style="margin-left:8px;">Back to search</a>
+  </form>
+</div>
+
+<script>
+const price = {{ bus.price }};
+const seatField = document.getElementById('seatField');
+const seatSummary = document.getElementById('seatSummary');
+const totalSummary = document.getElementById('totalSummary');
+let selected = [];
+
+document.querySelectorAll('.seat:not(.booked)').forEach(function(el){
+  el.addEventListener('click', function(){
+    const n = this.dataset.seat;
+    if (this.classList.contains('selected')) {
+      this.classList.remove('selected');
+      selected = selected.filter(s => s !== n);
+    } else {
+      if (selected.length >= 6) { alert('Maximum 6 seats per booking.'); return; }
+      this.classList.add('selected');
+      selected.push(n);
+    }
+    seatField.value = selected.join(',');
+    seatSummary.textContent = selected.length ? selected.join(', ') : 'none';
+    totalSummary.textContent = 'Rs. ' + (selected.length * price);
+  });
+});
+
+document.getElementById('bookForm').addEventListener('submit', function(e){
+  if (selected.length === 0) {
+    e.preventDefault();
+    alert('Please select at least one seat.');
+  }
+});
+</script>
+{% endblock %}

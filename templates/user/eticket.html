@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}E-Ticket{% endblock %}
+{% block content %}
+<div class="no-print" style="margin-bottom:18px;">
+  <a href="{{ url_for('my_bookings') }}" class="btn btn-outline btn-sm">&larr; My bookings</a>
+  {% if ticket %}<button onclick="window.print()" class="btn btn-sm" style="margin-left:8px;">Print / Save as PDF</button>{% endif %}
+</div>
+
+{% if not ticket %}
+<div class="panel" style="max-width:480px;">
+  <h2>&#127915; Find your e-ticket</h2>
+  <form method="get" action="{{ url_for('eticket') }}">
+    <label for="tid">Ticket number</label>
+    <input type="text" id="tid" name="tid" placeholder="e.g. Tic12" value="{{ tid }}" required>
+    <button type="submit" class="btn btn-amber" style="margin-top:14px;">Find ticket</button>
+  </form>
+</div>
+{% else %}
+<div class="panel" style="max-width:600px;">
+  <div class="ticket-row" style="margin-top:0;">
+    <h2 style="margin:0;">&#127915; RoadLine E-Ticket</h2>
+    <span class="badge {{ 'paid' if ticket.status=='Paid' else 'booked' }}">{{ ticket.status }}</span>
+  </div>
+  <table class="data" style="margin-top:16px;">
+    <tr><td><b>Ticket No.</b></td><td class="mono">{{ ticket.tid }}</td></tr>
+    <tr><td><b>Passenger</b></td><td>{{ ticket.uid }}</td></tr>
+    <tr><td><b>Bus</b></td><td>{{ ticket.bus.bname }}</td></tr>
+    <tr><td><b>Route</b></td><td class="route">{{ ticket.bus.source }} &rarr; {{ ticket.bus.dest }}</td></tr>
+    <tr><td><b>Departure / Arrival</b></td><td class="mono">{{ ticket.bus.stime }} &ndash; {{ ticket.bus.atime }}</td></tr>
+    <tr><td><b>Seats</b></td><td class="mono">{{ ticket.seat }}</td></tr>
+    <tr><td><b>Journey date</b></td><td>{{ ticket.date or '&mdash;' }}</td></tr>
+    <tr><td><b>Bus type</b></td><td>{{ ticket.bus.btype }}</td></tr>
+    <tr><td><b>Total fare</b></td><td>Rs. {{ ticket.total }}</td></tr>
+  </table>
+  <p class="center mono" style="letter-spacing:4px;color:var(--ink-soft);margin-top:20px;">
+    {{ ticket.tid.upper() }}-{{ '%04d'|format(ticket.id) }}
+  </p>
+  <p class="center muted" style="font-size:12.5px;">Show this ticket (printed or on screen) to the conductor while boarding.</p>
+</div>
+
+{% if ticket.status != 'Paid' %}
+<div class="panel no-print" style="max-width:600px;">
+  <p><span class="badge booked">Payment pending</span></p>
+  <a href="{{ url_for('payment_gateway', tid=ticket.tid) }}" class="btn btn-amber">Pay now</a>
+</div>
+{% endif %}
+{% endif %}
+{% endblock %}

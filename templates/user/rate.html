@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Rate a bus{% endblock %}
+{% block content %}
+<div class="panel" style="max-width:560px;">
+  <h1>&#9733; Rate &amp; review a bus</h1>
+  <form method="post" action="{{ url_for('rate_bus') }}">
+    <label for="bid">Select bus</label>
+    <select name="bid" id="bid" required>
+      <option value="">-- Select --</option>
+      {% for b in buses %}
+        <option value="{{ b.id }}">{{ b.bname }} ({{ b.source }} &rarr; {{ b.dest }})</option>
+      {% endfor %}
+    </select>
+
+    <label for="stars">Your rating</label>
+    <select name="stars" id="stars" required>
+      <option value="5">&#9733;&#9733;&#9733;&#9733;&#9733; Excellent</option>
+      <option value="4">&#9733;&#9733;&#9733;&#9733;&#9734; Good</option>
+      <option value="3">&#9733;&#9733;&#9733;&#9734;&#9734; Average</option>
+      <option value="2">&#9733;&#9733;&#9734;&#9734;&#9734; Poor</option>
+      <option value="1">&#9733;&#9734;&#9734;&#9734;&#9734; Very poor</option>
+    </select>
+
+    <label for="review">Your review</label>
+    <textarea name="review" id="review" placeholder="Tell us about your trip..." required></textarea>
+
+    <button type="submit" class="btn btn-amber" style="margin-top:14px;">Submit review</button>
+  </form>
+</div>
+
+<div class="panel">
+  <div class="panel-title">Recent reviews</div>
+  {% if reviews %}
+    {% for r in reviews %}
+    <div style="border-bottom:1px solid var(--line);padding:12px 0;">
+      <span class="stars">{{ ('&#9733;' * r.stars) | safe }}{{ ('&#9734;' * (5 - r.stars)) | safe }}</span>
+      <strong>{{ r.bus.bname if r.bus else 'Unknown bus' }}</strong> &mdash; <span class="muted">{{ r.uid }}</span>
+      <p style="margin:4px 0 0;">{{ r.review }}</p>
+    </div>
+    {% endfor %}
+  {% else %}
+    <p class="empty">No reviews yet. Be the first to review a bus!</p>
+  {% endif %}
+</div>
+{% endblock %}

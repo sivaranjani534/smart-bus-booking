@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Admin &middot; Buses{% endblock %}
+{% block content %}
+<h1>Buses on the network</h1>
+<div class="panel">
+  {% if buses %}
+  <table class="data">
+    <tr><th>Name</th><th>Route</th><th>Type</th><th>Time</th><th>Price</th><th>Rating</th><th></th></tr>
+    {% for b in buses %}
+    <tr>
+      <td><b>{{ b.bname }}</b><br><span class="muted" style="font-size:12px;">{{ b.name }}</span></td>
+      <td class="route">{{ b.source }} &rarr; {{ b.dest }}</td>
+      <td>{{ b.btype }}</td>
+      <td class="mono">{{ b.stime }}&ndash;{{ b.atime }}</td>
+      <td class="mono">Rs. {{ b.price }}</td>
+      <td>{% if b.avg_rating %}&#9733; {{ "%.1f"|format(b.avg_rating) }}{% else %}&mdash;{% endif %}</td>
+      <td>
+        <form method="post" action="{{ url_for('admin_delete_bus', bus_id=b.id) }}"
+              onsubmit="return confirm('Remove this bus?');">
+          <button type="submit" class="btn btn-sm btn-danger">Remove</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <p class="empty">No buses added yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

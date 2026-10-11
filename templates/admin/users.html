@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Admin &middot; Users{% endblock %}
+{% block content %}
+<h1>Registered users</h1>
+<div class="panel">
+  {% if users %}
+  <table class="data">
+    <tr><th>Name</th><th>Username</th><th>Gender</th><th>Phone</th><th>Email</th><th></th></tr>
+    {% for u in users %}
+    <tr>
+      <td>{{ u.name }}</td>
+      <td class="mono">{{ u.uname }}</td>
+      <td>{{ u.gender }}</td>
+      <td>{{ u.pnumber }}</td>
+      <td>{{ u.email }}</td>
+      <td>
+        <form method="post" action="{{ url_for('admin_delete_user', user_id=u.id) }}"
+              onsubmit="return confirm('Remove this user?');">
+          <button type="submit" class="btn btn-sm btn-danger">Remove</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <p class="empty">No users registered yet.</p>
+  {% endif %}
+</div>
+{% endblock %}
