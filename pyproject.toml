@@ -1,0 +1,2 @@
+[tool.vercel]
+entrypoint = "busticket_flask_ai_updated (3).app:app"
